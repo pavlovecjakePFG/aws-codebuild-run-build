@@ -166,7 +166,7 @@ function inputs2Parameters(inputs) {
   // This way the GitHub events can manage the builds.
   return {
     projectName,
-    sourceVersion,
+//    sourceVersion,
 //    sourceTypeOverride,
 //    sourceLocationOverride,
     buildspecOverride,
