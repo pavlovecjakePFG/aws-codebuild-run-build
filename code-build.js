@@ -150,7 +150,6 @@ function inputs2Parameters(inputs) {
     projectName,
     owner,
     repo,
-    sourceVersion,
     buildspecOverride,
     envPassthrough = [],
   } = inputs;
@@ -160,7 +159,7 @@ function inputs2Parameters(inputs) {
   
   const sourceTypeOverride = undefined;
   const sourceLocationOverride = undefined;
-  sourceVersion = undefined;
+  const sourceVersion = undefined;
 
   const environmentVariablesOverride = Object.entries(process.env)
     .filter(
@@ -171,7 +170,6 @@ function inputs2Parameters(inputs) {
   // The idempotencyToken is intentionally not set.
   // This way the GitHub events can manage the builds.
   return {
-    projectName,
     sourceVersion,
     sourceTypeOverride,
     sourceLocationOverride,
