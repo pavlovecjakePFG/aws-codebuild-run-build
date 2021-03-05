@@ -170,6 +170,7 @@ function inputs2Parameters(inputs) {
   // The idempotencyToken is intentionally not set.
   // This way the GitHub events can manage the builds.
   return {
+    projectName,
     sourceVersion,
     sourceTypeOverride,
     sourceLocationOverride,
