@@ -167,12 +167,12 @@ function inputs2Parameters(inputs) {
     sourceVersion = inputs.sourceVersion;
     sourceTypeOverride = "GITHUB";
     sourceLocationOverride = `https://github.com/${owner}/${repo}.git`;
-  }else if(sourceOverride === "S3"){
+  }else if(sourceOverride === "NONE"){
     sourceVersion = undefined;
     sourceTypeOverride = undefined;
     sourceLocationOverride = undefined;
   }else {
-    throw new Error("Value for blah blah is not GITHUB or S3");
+    throw new Error("Value for blah blah is not GITHUB or NONE");
   }
   
   const environmentVariablesOverride = Object.entries(process.env)
