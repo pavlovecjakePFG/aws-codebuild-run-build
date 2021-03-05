@@ -142,13 +142,14 @@ describe("inputs2Parameters", () => {
   const projectName = "project_name";
   const repoInfo = "owner/repo";
   const sha = "1234abcd-12ab-34cd-56ef-1234567890ab";
-  const sourceOverride = "GITHUB";
+  const sourceOverrideGithub = "GITHUB";
+  const sourceOverrideNone = "NONE";
 
   it("build basic parameters for codeBuild.startBuild", () => {
     // This is how GITHUB injects its input values.
     // It would be nice if there was an easy way to test this...
     process.env[`INPUT_PROJECT-NAME`] = projectName;
-    process.env[`INPUT_SOURCE-OVERRIDE`] = sourceOverride;
+    process.env[`INPUT_SOURCE-OVERRIDE`] = sourceOverrideGithub;
     process.env[`GITHUB_REPOSITORY`] = repoInfo;
     process.env[`GITHUB_SHA`] = sha;
     const test = inputs2Parameters({
@@ -156,7 +157,7 @@ describe("inputs2Parameters", () => {
       sourceVersion: sha,
       owner: "owner",
       repo: "repo",
-      sourceOverride,
+      sourceOverride: sourceOverrideGithub,
     });
     expect(test).to.haveOwnProperty("projectName").and.to.equal(projectName);
     expect(test).to.haveOwnProperty("sourceVersion").and.to.equal(sha);
@@ -192,11 +193,61 @@ describe("inputs2Parameters", () => {
     expect(shaEnv).to.haveOwnProperty("type").and.to.equal("PLAINTEXT");
   });
 
+  it("set source override to none for codeBuild.startBuild", () => {
+    // This is how GITHUB injects its input values.
+    // It would be nice if there was an easy way to test this...
+    process.env[`INPUT_PROJECT-NAME`] = projectName;
+    process.env[`INPUT_SOURCE-OVERRIDE`] = sourceOverrideNone;
+    process.env[`GITHUB_REPOSITORY`] = repoInfo;
+    process.env[`GITHUB_SHA`] = sha;
+    const test = inputs2Parameters({
+      projectName,
+      sourceVersion: sha,
+      owner: "owner",
+      repo: "repo",
+      sourceOverride: sourceOverrideNone,
+    });
+    expect(test).to.haveOwnProperty("projectName").and.to.equal(projectName);
+    expect(test)
+      .to.haveOwnProperty("sourceVersion")
+      .and.to.equal(undefined);
+    expect(test)
+      .to.haveOwnProperty("sourceTypeOverride")
+      .and.to.equal(undefined);
+    expect(test)
+      .to.haveOwnProperty("sourceLocationOverride")
+      .and.to.equal(undefined);
+    expect(test)
+      .to.haveOwnProperty("buildspecOverride")
+      .and.to.equal(undefined);
+
+    // I send everything that starts 'GITHUB_'
+    expect(test)
+      .to.haveOwnProperty("environmentVariablesOverride")
+      .and.to.have.lengthOf.greaterThan(1);
+
+    const [repoEnv] = test.environmentVariablesOverride.filter(
+      ({ name }) => name === "GITHUB_REPOSITORY"
+    );
+    expect(repoEnv)
+      .to.haveOwnProperty("name")
+      .and.to.equal("GITHUB_REPOSITORY");
+    expect(repoEnv).to.haveOwnProperty("value").and.to.equal(repoInfo);
+    expect(repoEnv).to.haveOwnProperty("type").and.to.equal("PLAINTEXT");
+
+    const [shaEnv] = test.environmentVariablesOverride.filter(
+      ({ name }) => name === "GITHUB_SHA"
+    );
+    expect(shaEnv).to.haveOwnProperty("name").and.to.equal("GITHUB_SHA");
+    expect(shaEnv).to.haveOwnProperty("value").and.to.equal(sha);
+    expect(shaEnv).to.haveOwnProperty("type").and.to.equal("PLAINTEXT");
+  });
+
   it("can process env-vars-for-codebuild", () => {
     // This is how GITHUB injects its input values.
     // It would be nice if there was an easy way to test this...
     process.env[`INPUT_PROJECT-NAME`] = projectName;
-    process.env[`INPUT_SOURCE-OVERRIDE`] = sourceOverride;
+    process.env[`INPUT_SOURCE-OVERRIDE`] = sourceOverrideGithub;
     process.env[`GITHUB_REPOSITORY`] = repoInfo;
     process.env[`GITHUB_SHA`] = sha;
 
@@ -215,7 +266,7 @@ describe("inputs2Parameters", () => {
       owner: "owner",
       repo: "repo",
       envPassthrough: ["one", "two", "three", "four"],
-      sourceOverride,
+      sourceOverride: sourceOverrideGithub,
     });
 
     expect(test)

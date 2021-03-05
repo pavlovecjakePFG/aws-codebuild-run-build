@@ -136,7 +136,7 @@ function githubInputs() {
     .filter((i) => i !== "");
     
   const sourceOverride = 
-    core.getInput("set-source-to-github", { required: false }) || "GITHUB";
+    core.getInput("source-override", { required: false }) || "GITHUB";
 
   return {
     projectName,
