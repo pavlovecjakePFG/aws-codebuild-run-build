@@ -84,8 +84,9 @@ async function waitForBuildEndTime(sdk, { id, logs }, nextToken) {
       );
     } else {
       //The error returned from the API wasn't about rate limiting, so throw it as an actual error and fail the job
-      console.log("Failed to execute build: " + errObject);
-      throw errObject;
+      //console.log("Failed to execute build: " + errObject);
+      //throw errObject;
+      
     }
   }
 
@@ -154,6 +155,12 @@ function inputs2Parameters(inputs) {
     envPassthrough = [],
   } = inputs;
 
+  // const sourceTypeOverride = "GITHUB";
+  // const sourceLocationOverride = `https://github.com/${owner}/${repo}.git`;
+  
+  const sourceTypeOverride = undefined;
+  const sourceLocationOverride = undefined;
+
   const environmentVariablesOverride = Object.entries(process.env)
     .filter(
       ([key]) => key.startsWith("GITHUB_") || envPassthrough.includes(key)
@@ -164,6 +171,9 @@ function inputs2Parameters(inputs) {
   // This way the GitHub events can manage the builds.
   return {
     projectName,
+    sourceVersion,
+    sourceTypeOverride,
+    sourceLocationOverride,
     buildspecOverride,
     environmentVariablesOverride,
   };
