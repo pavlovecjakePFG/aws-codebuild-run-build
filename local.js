@@ -36,8 +36,8 @@ const BRANCH_NAME = uuid();
 
 const params = cb.inputs2Parameters({
   projectName,
-  ...githubInfo(remote),
-  sourceVersion: BRANCH_NAME,
+//  ...githubInfo(remote),
+//  sourceVersion: BRANCH_NAME,
   buildspecOverride,
   envPassthrough,
 });
