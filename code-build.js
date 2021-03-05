@@ -134,6 +134,9 @@ function githubInputs() {
     .split(",")
     .map((i) => i.trim())
     .filter((i) => i !== "");
+    
+  const sourceOverride = 
+    core.getInput("set-source-to-github", { required: false }) || "GITHUB";
 
   return {
     projectName,
@@ -142,6 +145,7 @@ function githubInputs() {
     sourceVersion,
     buildspecOverride,
     envPassthrough,
+    sourceOverride,
   };
 }
 
@@ -152,15 +156,25 @@ function inputs2Parameters(inputs) {
     repo,
     buildspecOverride,
     envPassthrough = [],
+    sourceOverride,
   } = inputs;
 
-  // const sourceTypeOverride = "GITHUB";
-  // const sourceLocationOverride = `https://github.com/${owner}/${repo}.git`;
-  
-  const sourceTypeOverride = undefined;
-  const sourceLocationOverride = undefined;
-  const sourceVersion = undefined;
+  let sourceVersion = undefined;
+  let sourceTypeOverride = undefined;
+  let sourceLocationOverride = undefined;
 
+  if(sourceOverride === "GITHUB"){
+    sourceVersion = inputs.sourceVersion;
+    sourceTypeOverride = "GITHUB";
+    sourceLocationOverride = `https://github.com/${owner}/${repo}.git`;
+  }else if(sourceOverride === "S3"){
+    sourceVersion = undefined;
+    sourceTypeOverride = undefined;
+    sourceLocationOverride = undefined;
+  }else {
+    throw new Error("Value for blah blah is not GITHUB or S3");
+  }
+  
   const environmentVariablesOverride = Object.entries(process.env)
     .filter(
       ([key]) => key.startsWith("GITHUB_") || envPassthrough.includes(key)

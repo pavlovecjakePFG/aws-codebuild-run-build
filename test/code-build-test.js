@@ -142,11 +142,13 @@ describe("inputs2Parameters", () => {
   const projectName = "project_name";
   const repoInfo = "owner/repo";
   const sha = "1234abcd-12ab-34cd-56ef-1234567890ab";
+  const sourceOverride = "GITHUB";
 
   it("build basic parameters for codeBuild.startBuild", () => {
     // This is how GITHUB injects its input values.
     // It would be nice if there was an easy way to test this...
     process.env[`INPUT_PROJECT-NAME`] = projectName;
+    process.env[`INPUT_SOURCE-OVERRIDE`] = sourceOverride;
     process.env[`GITHUB_REPOSITORY`] = repoInfo;
     process.env[`GITHUB_SHA`] = sha;
     const test = inputs2Parameters({
@@ -154,6 +156,7 @@ describe("inputs2Parameters", () => {
       sourceVersion: sha,
       owner: "owner",
       repo: "repo",
+      sourceOverride,
     });
     expect(test).to.haveOwnProperty("projectName").and.to.equal(projectName);
     expect(test).to.haveOwnProperty("sourceVersion").and.to.equal(sha);
@@ -193,6 +196,7 @@ describe("inputs2Parameters", () => {
     // This is how GITHUB injects its input values.
     // It would be nice if there was an easy way to test this...
     process.env[`INPUT_PROJECT-NAME`] = projectName;
+    process.env[`INPUT_SOURCE-OVERRIDE`] = sourceOverride;
     process.env[`GITHUB_REPOSITORY`] = repoInfo;
     process.env[`GITHUB_SHA`] = sha;
 
@@ -211,6 +215,7 @@ describe("inputs2Parameters", () => {
       owner: "owner",
       repo: "repo",
       envPassthrough: ["one", "two", "three", "four"],
+      sourceOverride,
     });
 
     expect(test)
