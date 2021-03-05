@@ -160,6 +160,7 @@ function inputs2Parameters(inputs) {
   
   const sourceTypeOverride = undefined;
   const sourceLocationOverride = undefined;
+  sourceVersion = undefined;
 
   const environmentVariablesOverride = Object.entries(process.env)
     .filter(
